@@ -1,0 +1,50 @@
+---
+import  Video  from "../components/handtracking/video.astro";
+import TF from '../components/handtracking/tensorflow_setup.astro'
+
+import GameElement from '../components/canvasEl.astro'
+---
+<style>
+
+.main{
+    display:flex;
+    flex-direction: column;
+    padding:64px;
+    align-items: center;
+    justify-content: center;
+    height:50vw;
+    flex-wrap: wrap;
+    width:50vw;
+    box-sizing: border-box;
+}
+body{
+    margin:0;
+    display:flex;
+    gap:0;
+    flex-direction: column;
+    width:100vw;
+    height:100vh;
+    flex-wrap: wrap;
+    box-sizing: border-box;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    font-size: larger;
+}
+
+button{
+    padding:24px;
+}
+
+
+</style>
+
+
+<div class="main">
+
+<GameElement/>
+  
+      <TF></TF>
+<Video></Video>
+
+</div>

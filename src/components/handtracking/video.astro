@@ -1,0 +1,40 @@
+<style>
+  .container{
+    width:100%;
+    height:100%;
+    display:flex;
+    flex-direction: row;
+  }
+</style>
+<div class="container"></div>
+
+
+<script>
+
+async function video_feed(){
+
+  let container = document.querySelector(".container")
+   let video = document.createElement("video")
+   //video.style = "display:none;"
+   container.appendChild(video)
+    let constraints = {audio:false, video:true}
+
+let mediaStream = await navigator.mediaDevices
+  .getUserMedia(constraints)
+  //.then(mediaStream=>{mediaStream})
+        
+  video.srcObject = mediaStream;
+        video.style.visibility="hidden"
+
+    
+    video.onloadedmetadata = () => {
+      video.play();
+    }
+
+  }
+
+  video_feed()
+
+  </script>
+
+

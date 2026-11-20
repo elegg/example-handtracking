@@ -1,0 +1,91 @@
+
+<style>
+   
+    #game-screen{
+        height:400px;
+        width:700px;
+
+          image-rendering: pixelated;
+
+    }
+    button{
+        padding:20px; 
+        margin:48px;
+        font-size: 24px;
+                border: gray 1px solid;
+                border-radius: 6px;
+
+        &:hover{cursor: pointer;opacity: 80%;}
+    }
+</style>
+
+
+<canvas id="game-screen">
+
+
+</canvas>
+    <button class="start">Start</button>
+
+
+<script>
+import {Game} from '../scripts/dinogame2'
+import {Hub} from '../scripts/messageHub'
+
+let h = new Hub("MAIN")
+let game = new Game()
+let canvas =document.querySelector("canvas#game-screen")
+canvas.width = 500
+canvas.height = 500
+const offscreenCanvas = canvas.transferControlToOffscreen();
+
+const worker = new SharedWorker('../scripts/game_worker.js', {type:"module"});
+
+const worker2 = new SharedWorker('../scripts/tf_worker3.js');
+
+const spare_port = new SharedWorker('../scripts/game_worker.js', {type:"module"});
+
+worker.port.start()
+worker2.port.start()
+spare_port.port.start()
+h.addMessageType({name:"hello", worker:worker.port})
+//h.addMessageType({name:"hello", worker:worker2.port, alias:"hello2"})
+h.addMessageType({name:"add_port", worker:worker2.port})
+h.addMessageType({name:"start", worker:worker.port})
+h.addMessageType({name:"addCanvas", worker:worker.port})
+h.addMessageType({name:"run", worker:worker.port})
+h.addMessageType({name:"handle_space", worker:worker.port})
+h.addMessageType({name:"handle_down", worker:worker.port})
+
+h.send_add_port({port:spare_port.port}, {}, [spare_port.port])
+
+h.addListener("response", console.log, worker.port)
+h.send_hello("hello ")
+h.send_start()
+h.send_addCanvas(offscreenCanvas, {},[offscreenCanvas] )
+h.send_run()
+
+
+//h.addListener({key:"angle", callback:(a)=>{console.log("CANVAS", a)}, worker:worker2.port})
+
+//h.send_hello2("hello from 2")
+
+h.addListener("angle", (e)=>console.log("in canvas", e), worker2.port)
+
+document.querySelector(".start").addEventListener("click", (k)=>h.send_start())
+
+
+document.addEventListener("keypress", (k)=>{
+    console.log(k)
+    
+    k.key ==="w" && h.send_handle_space()})
+document.addEventListener("keypress", (k)=>k.key ==="s" && h.send_handle_down())
+
+/*
+game.start()
+game.addCanvas(canvas)
+document.addEventListener("keypress", game.handle_space.bind(game))
+game.draw()
+
+*/
+
+</script>
